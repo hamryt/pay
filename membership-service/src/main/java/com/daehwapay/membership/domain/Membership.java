@@ -1,12 +1,8 @@
 package com.daehwapay.membership.domain;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-
-import java.lang.reflect.Member;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
