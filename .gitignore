@@ -34,5 +34,6 @@ out/
 /.nb-gradle/
 
 .env
+
 ### VS Code ###
 .vscode/
