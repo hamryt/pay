@@ -19,7 +19,7 @@ public class FindMembershipService implements FindMembershipUseCase {
     @Override
     @Transactional
     public Membership findMembership(FindMembershipCommand command) {
-        MembershipEntity membershipEntity =findMembershipPort.findMembership(command.getMembershipId());
+        MembershipEntity membershipEntity = findMembershipPort.findMembership(command.getMembershipId());
         return membershipMapper.mapToDomainEntity(membershipEntity);
     }
 }

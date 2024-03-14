@@ -1,9 +1,7 @@
 package com.daehwapay.membership.adapter.out.persistence;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Generated;
@@ -16,8 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MembershipEntity {
     @Id
-    @Generated
-    private Long membershipId;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long membershipId = 0L;
     private String name;
     private String email;
     private String address;
