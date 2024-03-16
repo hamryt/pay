@@ -1,6 +1,7 @@
 package com.daehwapay.membership.application.port.in;
 
-import common.SelfValidating;
+
+import com.daehwapay.common.SelfValidating;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

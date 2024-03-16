@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
-        properties = {"DB_URL = jdbc:mysql://localhost:3306/auth?serverTimezone=Asia/Seoul",
+        properties = {"DB_URL = jdbc:mysql://localhost:3306/pay?serverTimezone=Asia/Seoul",
                 "DB_USER = root",
                 "DB_PASSWORD = riahn"}
 )

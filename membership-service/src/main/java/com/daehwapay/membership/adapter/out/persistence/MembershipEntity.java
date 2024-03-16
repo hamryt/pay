@@ -1,11 +1,14 @@
 package com.daehwapay.membership.adapter.out.persistence;
 
 
+import com.daehwapay.membership.domain.Membership;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "membership")

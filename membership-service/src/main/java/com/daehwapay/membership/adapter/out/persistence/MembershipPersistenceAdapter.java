@@ -1,15 +1,14 @@
 package com.daehwapay.membership.adapter.out.persistence;
 
+import com.daehwapay.common.PersistenceAdapter;
 import com.daehwapay.membership.application.port.out.FindMembershipPort;
+import com.daehwapay.membership.application.port.out.SaveMembershipPort;
 import com.daehwapay.membership.application.port.out.RegisterMembershipPort;
-import common.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class MembershipPersistenceAdapter implements RegisterMembershipPort, FindMembershipPort {
+public class MembershipPersistenceAdapter implements SaveMembershipPort, RegisterMembershipPort, FindMembershipPort {
 
     private final MembershipRepository membershipRepository;
 
@@ -23,5 +22,10 @@ public class MembershipPersistenceAdapter implements RegisterMembershipPort, Fin
     @Override
     public MembershipEntity findMembership(Long membershipId) {
         return membershipRepository.getReferenceById(membershipId);
+    }
+
+    @Override
+    public MembershipEntity saveMembership(MembershipEntity entity) {
+        return membershipRepository.save(entity);
     }
 }

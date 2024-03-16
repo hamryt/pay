@@ -1,9 +1,9 @@
 package com.daehwapay.membership.adapter.in.web;
 
+import com.daehwapay.common.WebAdapter;
 import com.daehwapay.membership.application.port.in.FindMembershipCommand;
 import com.daehwapay.membership.application.port.in.FindMembershipUseCase;
 import com.daehwapay.membership.domain.Membership;
-import common.WebAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,12 +1,12 @@
 package com.daehwapay.membership.application.service;
 
+import com.daehwapay.common.UseCase;
 import com.daehwapay.membership.adapter.out.persistence.MembershipEntity;
 import com.daehwapay.membership.adapter.out.persistence.MembershipMapper;
 import com.daehwapay.membership.application.port.in.RegisterMembershipCommand;
 import com.daehwapay.membership.application.port.in.RegisterMembershipUseCase;
 import com.daehwapay.membership.application.port.out.RegisterMembershipPort;
 import com.daehwapay.membership.domain.Membership;
-import common.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -19,9 +19,6 @@ public class RegisterMembershipService implements RegisterMembershipUseCase {
     @Override
     @Transactional
     public Membership registerMembership(RegisterMembershipCommand command) {
-        /**
-         * 1. 회원 가입
-         */
         MembershipEntity membershipEntity = registerMembershipPort.createMembership(command.getName(), command.getEmail(), command.getAddress(), command.isValid(), command.isCorporation());
 
         return membershipMapper.mapToDomainEntity(membershipEntity);
