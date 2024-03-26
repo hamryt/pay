@@ -1,4 +1,5 @@
 CREATE DATABASE IF NOT EXISTS membership;
+CREATE DATABASE IF NOT EXISTS banking;
 
 CREATE TABLE membership.membership
 (
