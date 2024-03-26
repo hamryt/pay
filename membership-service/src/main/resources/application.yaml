@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: membership
+    name: membership-service
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     database: mysql
@@ -18,7 +18,7 @@ spring:
         format_sql: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
+    url: ${MEMBERSHIP_DB_URL}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   flyway:
