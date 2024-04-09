@@ -30,6 +30,6 @@ public class ModifyMembershipService implements ModifyMembershipUseCase {
         membership.setValid(command.isValid());
         membership.setCorporation(command.isCorporation());
 
-        return membershipMapper.mapToDomainEntity(saveMembershipPort.saveMembership(membership));
+        return membershipMapper.entityToDomain(saveMembershipPort.saveMembership(membership));
     }
 }

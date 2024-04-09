@@ -1,12 +1,9 @@
 package com.daehwapay.membership.adapter.in.web;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class FindMembershipRequest {
     private Long membershipId;
 }

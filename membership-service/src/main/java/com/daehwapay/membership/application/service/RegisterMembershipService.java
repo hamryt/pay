@@ -21,6 +21,6 @@ public class RegisterMembershipService implements RegisterMembershipUseCase {
     public Membership registerMembership(RegisterMembershipCommand command) {
         MembershipEntity membershipEntity = registerMembershipPort.createMembership(command.getName(), command.getEmail(), command.getAddress(), command.isValid(), command.isCorporation());
 
-        return membershipMapper.mapToDomainEntity(membershipEntity);
+        return membershipMapper.entityToDomain(membershipEntity);
     }
 }
