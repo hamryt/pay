@@ -1,9 +1,6 @@
 package com.daehwapay.bankingservice.adapter.out.persistence;
 
-import com.daehwapay.bankingservice.domain.RegisteredBankAccount;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
