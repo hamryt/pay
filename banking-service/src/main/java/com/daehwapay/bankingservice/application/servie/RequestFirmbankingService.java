@@ -39,10 +39,10 @@ public class RequestFirmbankingService implements RequestFirmbankingUseCase {
                         command.getToBankAccount()
                 ));
 
-        if (result.getResultCode() == 0) {
-            requestFirmbankingEntity.setFirmbankingStatus(0);
-        } else {
+        if (result.getResultCode() == 1) {
             requestFirmbankingEntity.setFirmbankingStatus(1);
+        } else {
+            requestFirmbankingEntity.setFirmbankingStatus(0);
         }
 
         return mapper.entityToDomain(requestFirmbankingPort.save(requestFirmbankingEntity), UUID.randomUUID());

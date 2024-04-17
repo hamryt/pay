@@ -10,6 +10,7 @@ import com.daehwapay.bankingservice.application.port.out.RegisterBankAccountPort
 import com.daehwapay.bankingservice.application.port.out.RequestBankAccountInfoPort;
 import com.daehwapay.bankingservice.domain.RegisteredBankAccount;
 import com.daehwapay.common.UseCase;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
@@ -21,6 +22,7 @@ public class RegisterBankAccountService implements RegisterBankAccountUseCase {
     private final RegisteredBankAccountMapper mapper;
 
     @Override
+    @Transactional
     public RegisteredBankAccount registerBankAccount(RegisterBankAccountCommand command) {
         BankAccount bankAccount = requestBankAccountInfoPort.requestBankAccount(new GetBankAccountRequest(command.getBankName(), command.getBankAccountNumber()));
 

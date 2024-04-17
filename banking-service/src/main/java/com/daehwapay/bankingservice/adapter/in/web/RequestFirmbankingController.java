@@ -5,6 +5,7 @@ import com.daehwapay.bankingservice.application.port.in.RequestFirmbankingUseCas
 import com.daehwapay.bankingservice.domain.RequestFirmbanking;
 import com.daehwapay.common.WebAdapter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,7 @@ public class RequestFirmbankingController {
     private final RequestFirmbankingUseCase useCase;
 
     @PostMapping("/banking/firmbanking/request")
-    RequestFirmbanking registerMembership(@RequestBody RequestFirmbankingRequest request) {
+    ResponseEntity<RequestFirmbanking> registerMembership(@RequestBody RequestFirmbankingRequest request) {
 
         RequestFirmbankingCommand command = RequestFirmbankingCommand.builder()
                 .fromBankName(request.getFromBankName())
@@ -27,6 +28,6 @@ public class RequestFirmbankingController {
                 .moneyAmount(request.getMoneyAmount())
                 .build();
 
-        return useCase.registerFirmbanking(command);
+        return ResponseEntity.ok(useCase.registerFirmbanking(command));
     }
 }

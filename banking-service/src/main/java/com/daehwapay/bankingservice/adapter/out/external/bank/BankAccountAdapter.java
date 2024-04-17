@@ -13,6 +13,6 @@ public class BankAccountAdapter implements RequestBankAccountInfoPort, RequestEx
 
     @Override
     public FirmbankingResult requestExternalFirmbanking(ExternalFirmbankingRequest request) {
-        return new FirmbankingResult(0);
+        return new FirmbankingResult(1);
     }
 }
