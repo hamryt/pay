@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: logging-consumer
+
+kafka:
+  clusters:
+    bootstrapservers: ${KAFKA_CLUSTERS_BOOTSTRAPSERVERS}
+
+logging:
+  topic: ${LOGGING_TOPIC}
