@@ -25,3 +25,15 @@ spring:
     enabled: true
     baseline-on-migrate: false
     locations: classpath:migration
+
+kafka:
+  clusters:
+    bootstrapservers: ${KAFKA_CLUSTERS_BOOTSTRAPSERVERS}
+
+task:
+  topic: ${TASK_TOPIC}
+  result:
+    topic: ${TASK_RESULT_TOPIC}
+
+logging:
+  topic: ${LOGGING_TOPIC}

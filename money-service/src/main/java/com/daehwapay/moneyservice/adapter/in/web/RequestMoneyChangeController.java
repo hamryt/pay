@@ -37,4 +37,24 @@ public class RequestMoneyChangeController {
 
         return ResponseEntity.ok(detail);
     }
+
+    @PostMapping(path = "/money/increase/async")
+    ResponseEntity<MoneyChangeResultDetail> increaseMoneyAsync(@RequestBody IncreaseMoneyChangeRequest request) {
+        IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
+                .targetMembershipId(request.getTargetMembershipId())
+                .amount(request.getAmount())
+                .corporation(request.isCorporation())
+                .build();
+
+        MoneyChangingRequest moneyChangingRequest = useCase.increaseMoneyAsync(command);
+
+        MoneyChangeResultDetail detail = MoneyChangeResultDetail.builder()
+                .moneyChangingRequestId(moneyChangingRequest.getMoneyChangingRequestId())
+                .moneyChangeType(moneyChangingRequest.getMoneyChangeType())
+                .moneyChangingType(MoneyChangingResultStatus.SUCCEEDED)
+                .amount(moneyChangingRequest.getMoneyAmount())
+                .build();
+
+        return ResponseEntity.ok(detail);
+    }
 }

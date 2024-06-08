@@ -66,6 +66,8 @@ services:
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - TASK_TOPIC=daehwa.task.recharge
+      - TASK_RESULT_TOPIC=daehwa.task.result
       - LOGGING_TOPIC=daehwa.logging.out.stdout
 
   zookeeper:
@@ -125,6 +127,19 @@ services:
     environment:
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - LOGGING_TOPIC=daehwa.logging.out.stdout
+
+  task-consumer:
+    image: pay-task-consumer:0.0.1-SNAPSHOT
+    networks:
+      - daehwapay_network
+    restart: always
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - TASK_TOPIC=daehwa.task.recharge
+      - TASK_RESULT_TOPIC=daehwa.task.result
 
 networks:
   daehwapay_network:
