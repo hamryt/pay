@@ -1,5 +1,18 @@
 version: '3'
 services:
+  axon-server:
+    container_name: axon-server
+    image: axoniq/axonserver:2024.0.4-jdk-17
+    networks:
+      - daehwapay_network
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+    volumes:
+      - axonserver-data:/axonserver/data
+      - axonserver-events:/axonserver/events
+      - axonserver-config:/axonserver/config:ro
+
   mysql:
     image: mysql:8.0
     networks:
@@ -26,6 +39,10 @@ services:
     depends_on:
       - mysql
     environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/membership?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=riahn
@@ -60,11 +77,16 @@ services:
     depends_on:
       - mysql
     environment:
+      - AXONIQ_AXONSERVER_STANDALONE=true
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/money?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=riahn
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - TASK_TOPIC=daehwa.task.recharge
       - TASK_RESULT_TOPIC=daehwa.task.result
@@ -144,3 +166,23 @@ services:
 networks:
   daehwapay_network:
     driver: bridge
+
+volumes:
+  axonserver-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/axon-server-se/data
+  axonserver-events:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/axon-server-se/events
+  axonserver-config:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/axon-server-se/config

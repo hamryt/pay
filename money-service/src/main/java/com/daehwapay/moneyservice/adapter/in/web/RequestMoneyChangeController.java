@@ -1,6 +1,7 @@
 package com.daehwapay.moneyservice.adapter.in.web;
 
 import com.daehwapay.common.WebAdapter;
+import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyCommand;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestCommand;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestUseCase;
 import com.daehwapay.moneyservice.domain.MoneyChangingRequest;
@@ -56,5 +57,10 @@ public class RequestMoneyChangeController {
                 .build();
 
         return ResponseEntity.ok(detail);
+    }
+
+    @PostMapping(path = "/money/create-member-money")
+    void createMemberMoney(@RequestBody CreateMemberMoneyRequest request) {
+        useCase.createMemberMoney(new CreateMemberMoneyCommand(request.getTargetMembershipId()));
     }
 }

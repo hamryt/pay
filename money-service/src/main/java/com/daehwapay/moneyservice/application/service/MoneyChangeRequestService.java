@@ -4,9 +4,11 @@ import com.daehwapay.common.CountDownLatchManager;
 import com.daehwapay.common.RechargingMoneyTask;
 import com.daehwapay.common.SubTask;
 import com.daehwapay.common.UseCase;
+import com.daehwapay.moneyservice.adapter.in.axon.command.CreateMoneyCommand;
 import com.daehwapay.moneyservice.adapter.out.persistence.MemberMoneyEntity;
 import com.daehwapay.moneyservice.adapter.out.persistence.MoneyChangeRequestEntity;
 import com.daehwapay.moneyservice.adapter.out.persistence.MoneyChangeRequestMapper;
+import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyCommand;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestCommand;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestUseCase;
 import com.daehwapay.moneyservice.application.port.out.IncreaseMoneyPort;
@@ -16,6 +18,7 @@ import com.daehwapay.moneyservice.enums.ChangingMoneyStatus;
 import com.daehwapay.moneyservice.enums.ChangingType;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +32,11 @@ public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase {
     private final CountDownLatchManager countDownLatchManager;
     private final MoneyChangeRequestMapper moneyChangeRequestMapper;
     private final SendRechargingMoneyTaskPort sendRechargingMoneyTaskPort;
+    private final CommandGateway commandGateway;
 
     @Override
     public MoneyChangingRequest increaseMoney(IncreaseMoneyRequestCommand command) {
+        commandGateway.send("d");
         /**
          * 머니 충전 과정
          * 1. 고객 정보가 정상인지 확인 (멤버)
@@ -119,6 +124,19 @@ public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase {
 
         // 3-1. task-consumer
         //  등록된 sub-task, status 모두 ok -> task 결과를 produce
+    }
+
+    @Override
+    public void createMemberMoney(CreateMemberMoneyCommand command) {
+        commandGateway.send(new CreateMoneyCommand(command.targetMembershipId()))
+                .whenComplete((Object result, Throwable throwable) -> {
+                    if (throwable == null) {
+                        System.out.println("Create Money Aggregate ID:" + result.toString());
+                    } else {
+                        throwable.printStackTrace();
+                        System.out.println("error : " + throwable.getMessage());
+                    }
+                });
     }
 
     @Nullable
