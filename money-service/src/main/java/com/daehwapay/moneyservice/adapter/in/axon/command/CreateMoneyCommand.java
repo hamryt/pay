@@ -1,14 +1,17 @@
 package com.daehwapay.moneyservice.adapter.in.axon.command;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateMoneyCommand {
+    @NotNull
     private String membershipId;
-
-    public CreateMoneyCommand(String membershipId) {
-        this.membershipId = membershipId;
-    }
 }

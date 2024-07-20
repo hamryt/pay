@@ -5,12 +5,16 @@ import com.daehwapay.common.RechargingMoneyTask;
 import com.daehwapay.common.SubTask;
 import com.daehwapay.common.UseCase;
 import com.daehwapay.moneyservice.adapter.in.axon.command.CreateMoneyCommand;
+import com.daehwapay.moneyservice.adapter.in.axon.command.IncreaseMemberMoneyCommand;
 import com.daehwapay.moneyservice.adapter.out.persistence.MemberMoneyEntity;
 import com.daehwapay.moneyservice.adapter.out.persistence.MoneyChangeRequestEntity;
 import com.daehwapay.moneyservice.adapter.out.persistence.MoneyChangeRequestMapper;
 import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyCommand;
+import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyUseCase;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestCommand;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestUseCase;
+import com.daehwapay.moneyservice.application.port.out.CreateMoneyPort;
+import com.daehwapay.moneyservice.application.port.out.GetMoneyPort;
 import com.daehwapay.moneyservice.application.port.out.IncreaseMoneyPort;
 import com.daehwapay.moneyservice.application.port.out.SendRechargingMoneyTaskPort;
 import com.daehwapay.moneyservice.domain.MoneyChangingRequest;
@@ -26,13 +30,15 @@ import java.util.UUID;
 
 @UseCase
 @RequiredArgsConstructor
-public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase {
+public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase, CreateMemberMoneyUseCase {
 
-    private final IncreaseMoneyPort increaseMoneyPort;
     private final CountDownLatchManager countDownLatchManager;
     private final MoneyChangeRequestMapper moneyChangeRequestMapper;
     private final SendRechargingMoneyTaskPort sendRechargingMoneyTaskPort;
     private final CommandGateway commandGateway;
+    private final CreateMoneyPort createMoneyPort;
+    private final IncreaseMoneyPort increaseMoneyPort;
+    private final GetMoneyPort getMoneyPort;
 
     @Override
     public MoneyChangingRequest increaseMoney(IncreaseMoneyRequestCommand command) {
@@ -127,11 +133,52 @@ public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase {
     }
 
     @Override
+    public void increaseMemberMoney(IncreaseMoneyRequestCommand command) {
+        MemberMoneyEntity money = getMoneyPort.getMemberMoneyById(command.getTargetMembershipId());
+
+        commandGateway.send(getIncreaseMemberMoneyCommand(money))
+                .whenComplete((Object result, Throwable throwable) -> {
+                    if (throwable == null) {
+                        System.out.println("Aggregate ID:" + result.toString());
+
+                        MemberMoneyEntity memberMoneyJpaEntity = increaseMoneyPort.increaseMoney(
+                                command.getTargetMembershipId(), command.getAmount()
+                        );
+
+                        if (memberMoneyJpaEntity != null) {
+                            moneyChangeRequestMapper.entityToDomain(increaseMoneyPort.createMoneyChange(
+                                            command.getTargetMembershipId(),
+                                            ChangingType.INCREASE,
+                                            command.getAmount(),
+                                            command.isCorporation(),
+                                            ChangingMoneyStatus.SUCCEEDED,
+                                            UUID.randomUUID()
+                                    )
+                            );
+                        }
+                    } else {
+                        System.out.println("error : " + throwable.getMessage());
+                    }
+                });
+    }
+
+    private IncreaseMemberMoneyCommand getIncreaseMemberMoneyCommand(MemberMoneyEntity money) {
+        System.out.println("increase command aggregate id: " + money.getAggregateIdentifier());
+        return IncreaseMemberMoneyCommand.builder()
+                .id(money.getAggregateIdentifier())
+                .membershipId(money.getMembershipId())
+                .balance(money.getBalance())
+                .build();
+    }
+
+    @Override
     public void createMemberMoney(CreateMemberMoneyCommand command) {
-        commandGateway.send(new CreateMoneyCommand(command.targetMembershipId()))
+        commandGateway.send(CreateMoneyCommand.builder().membershipId(command.targetMembershipId()).build())
                 .whenComplete((Object result, Throwable throwable) -> {
                     if (throwable == null) {
                         System.out.println("Create Money Aggregate ID:" + result.toString());
+
+                        createMoneyPort.save(Long.parseLong(command.targetMembershipId()), 0, result.toString());
                     } else {
                         throwable.printStackTrace();
                         System.out.println("error : " + throwable.getMessage());

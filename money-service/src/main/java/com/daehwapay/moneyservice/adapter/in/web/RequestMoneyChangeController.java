@@ -2,6 +2,7 @@ package com.daehwapay.moneyservice.adapter.in.web;
 
 import com.daehwapay.common.WebAdapter;
 import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyCommand;
+import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyUseCase;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestCommand;
 import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestUseCase;
 import com.daehwapay.moneyservice.domain.MoneyChangingRequest;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RequestMoneyChangeController {
 
-    private final IncreaseMoneyRequestUseCase useCase;
+    private final IncreaseMoneyRequestUseCase increaseUseCase;
+    private final CreateMemberMoneyUseCase createUseCase;
 
     @PostMapping(path = "/money/increase")
     ResponseEntity<MoneyChangeResultDetail> increaseMoney(@RequestBody IncreaseMoneyChangeRequest request) {
@@ -27,7 +29,7 @@ public class RequestMoneyChangeController {
                 .corporation(request.isCorporation())
                 .build();
 
-        MoneyChangingRequest moneyChangingRequest = useCase.increaseMoney(command);
+        MoneyChangingRequest moneyChangingRequest = increaseUseCase.increaseMoney(command);
 
         MoneyChangeResultDetail detail = MoneyChangeResultDetail.builder()
                 .moneyChangingRequestId(moneyChangingRequest.getMoneyChangingRequestId())
@@ -47,7 +49,7 @@ public class RequestMoneyChangeController {
                 .corporation(request.isCorporation())
                 .build();
 
-        MoneyChangingRequest moneyChangingRequest = useCase.increaseMoneyAsync(command);
+        MoneyChangingRequest moneyChangingRequest = increaseUseCase.increaseMoneyAsync(command);
 
         MoneyChangeResultDetail detail = MoneyChangeResultDetail.builder()
                 .moneyChangingRequestId(moneyChangingRequest.getMoneyChangingRequestId())
@@ -61,6 +63,17 @@ public class RequestMoneyChangeController {
 
     @PostMapping(path = "/money/create-member-money")
     void createMemberMoney(@RequestBody CreateMemberMoneyRequest request) {
-        useCase.createMemberMoney(new CreateMemberMoneyCommand(request.getTargetMembershipId()));
+        createUseCase.createMemberMoney(new CreateMemberMoneyCommand(request.getTargetMembershipId()));
+    }
+
+    @PostMapping(path = "/money/increate-member-money")
+    void increaseMemberMoney(@RequestBody IncreaseMemberMoneyRequest request) {
+        IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
+                .targetMembershipId(request.getMembershipId())
+                .amount(request.getBalance())
+                .corporation(request.isCorporation())
+                .build();
+
+        increaseUseCase.increaseMemberMoney(command);
     }
 }
