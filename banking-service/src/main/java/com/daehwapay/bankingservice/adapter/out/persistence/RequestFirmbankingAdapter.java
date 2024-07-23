@@ -1,11 +1,10 @@
 package com.daehwapay.bankingservice.adapter.out.persistence;
 
-import com.daehwapay.bankingservice.adapter.out.external.bank.ExternalFirmbankingRequest;
-import com.daehwapay.bankingservice.adapter.out.external.bank.FirmbankingResult;
-import com.daehwapay.bankingservice.application.port.out.RequestExternalFirmbankingPort;
 import com.daehwapay.bankingservice.application.port.out.RequestFirmbankingPort;
 import com.daehwapay.common.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.UUID;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -14,7 +13,7 @@ public class RequestFirmbankingAdapter implements RequestFirmbankingPort {
     private final RequestFirmbankingRepository repository;
 
     @Override
-    public RequestFirmbankingEntity create(String fromBankName, String fromBankAccount, String toBankName, String toBankAccount, int moneyAccount, int firmbankingStatus) {
+    public RequestFirmbankingEntity create(String fromBankName, String fromBankAccount, String toBankName, String toBankAccount, int moneyAccount, int firmbankingStatus, String aggregateIdentifier) {
         return repository.save(new RequestFirmbankingEntity(
                 0L,
                 fromBankName,
@@ -22,7 +21,9 @@ public class RequestFirmbankingAdapter implements RequestFirmbankingPort {
                 toBankName,
                 toBankAccount,
                 moneyAccount,
-                firmbankingStatus));
+                firmbankingStatus,
+                UUID.randomUUID().toString(),
+                aggregateIdentifier));
     }
 
     @Override

@@ -4,4 +4,6 @@ import com.daehwapay.bankingservice.domain.RequestFirmbanking;
 
 public interface RequestFirmbankingUseCase {
     RequestFirmbanking registerFirmbanking(RequestFirmbankingCommand command);
+
+    void requestFirmbankingByEvent(RequestFirmbankingCommand command);
 }

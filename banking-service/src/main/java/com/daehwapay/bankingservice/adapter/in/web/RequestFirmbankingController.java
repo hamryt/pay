@@ -30,4 +30,18 @@ public class RequestFirmbankingController {
 
         return ResponseEntity.ok(useCase.registerFirmbanking(command));
     }
+
+    @PostMapping("/banking/firmbanking/request-async")
+    void registerMembershipAsync(@RequestBody RequestFirmbankingRequest request) {
+
+        RequestFirmbankingCommand command = RequestFirmbankingCommand.builder()
+                .fromBankName(request.getFromBankName())
+                .fromBankAccount(request.getFromBankAccount())
+                .toBankName(request.getToBankName())
+                .toBankAccount(request.getToBankAccount())
+                .moneyAmount(request.getMoneyAmount())
+                .build();
+
+        useCase.requestFirmbankingByEvent(command);
+    }
 }

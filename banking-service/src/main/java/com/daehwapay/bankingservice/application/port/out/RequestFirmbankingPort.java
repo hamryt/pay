@@ -9,7 +9,8 @@ public interface RequestFirmbankingPort {
             String toBankName,
             String toBankAccount,
             int moneyAccount,
-            int firmbankingStatus
+            int firmbankingStatus,
+            String aggregateIdentifier
     );
 
     RequestFirmbankingEntity save(RequestFirmbankingEntity entity);

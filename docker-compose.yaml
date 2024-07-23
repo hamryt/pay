@@ -60,6 +60,11 @@ services:
     depends_on:
       - mysql
     environment:
+      - AXONIQ_AXONSERVER_STANDALONE=true
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/banking?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=riahn
@@ -86,7 +91,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=riahn
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - TASK_TOPIC=daehwa.task.recharge
       - TASK_RESULT_TOPIC=daehwa.task.result
