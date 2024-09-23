@@ -2,6 +2,7 @@ package com.daehwapay.bankingservice.adapter.in.web;
 
 import com.daehwapay.bankingservice.application.port.in.RequestFirmbankingCommand;
 import com.daehwapay.bankingservice.application.port.in.RequestFirmbankingUseCase;
+import com.daehwapay.bankingservice.adapter.axon.command.UpdateRequestFirmbankingCommand;
 import com.daehwapay.bankingservice.domain.RequestFirmbanking;
 import com.daehwapay.common.WebAdapter;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +44,11 @@ public class RequestFirmbankingController {
                 .build();
 
         useCase.requestFirmbankingByEvent(command);
+    }
+
+    @PostMapping(path = "/banking/firmbanking/update-eda")
+    void updateFirmbankingByEvent(@RequestBody UpdateFirmbankingRequest request) {
+        UpdateRequestFirmbankingCommand command = new UpdateRequestFirmbankingCommand(request.getFirmbankingAggregateIdentifier(), request.getStatus());
+        useCase.updateFirmbankingByEvent(command);
     }
 }

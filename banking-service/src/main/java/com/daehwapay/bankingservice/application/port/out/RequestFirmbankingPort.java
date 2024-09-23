@@ -14,4 +14,6 @@ public interface RequestFirmbankingPort {
     );
 
     RequestFirmbankingEntity save(RequestFirmbankingEntity entity);
+
+    RequestFirmbankingEntity find(String aggregateIdentifier);
 }

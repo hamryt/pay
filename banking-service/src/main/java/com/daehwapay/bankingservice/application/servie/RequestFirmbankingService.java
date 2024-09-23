@@ -1,6 +1,7 @@
 package com.daehwapay.bankingservice.application.servie;
 
 import com.daehwapay.bankingservice.adapter.axon.command.CreateRequestFirmbankingCommand;
+import com.daehwapay.bankingservice.adapter.axon.command.UpdateRequestFirmbankingCommand;
 import com.daehwapay.bankingservice.adapter.out.external.bank.ExternalFirmbankingRequest;
 import com.daehwapay.bankingservice.adapter.out.external.bank.FirmbankingResult;
 import com.daehwapay.bankingservice.adapter.out.persistence.RequestFirmbankingEntity;
@@ -99,5 +100,22 @@ public class RequestFirmbankingService implements RequestFirmbankingUseCase {
                 System.out.println("error:" + throwable.getMessage());
             }
         });
+    }
+
+    @Override
+    public void updateFirmbankingByEvent(UpdateRequestFirmbankingCommand command) {
+        commandGateway.send(command)
+                .whenComplete((result, throwable) -> {
+                    if (throwable == null) {
+                        System.out.println("update firmbanking by event aggregate id:" + result.toString());
+                        RequestFirmbankingEntity entity = requestFirmbankingPort.find(result.toString());
+
+                        entity.setFirmbankingStatus(command.getFirmbankingStatus());
+                        requestFirmbankingPort.save(entity);
+                    } else {
+                        System.out.println("error: " + throwable.getMessage());
+                        throwable.printStackTrace();
+                    }
+                });
     }
 }

@@ -30,4 +30,9 @@ public class RequestFirmbankingAdapter implements RequestFirmbankingPort {
     public RequestFirmbankingEntity save(RequestFirmbankingEntity entity) {
         return repository.save(entity);
     }
+
+    @Override
+    public RequestFirmbankingEntity find(String aggregateIdentifier) {
+        return repository.findFirstByAggregateIdentifier(aggregateIdentifier);
+    }
 }

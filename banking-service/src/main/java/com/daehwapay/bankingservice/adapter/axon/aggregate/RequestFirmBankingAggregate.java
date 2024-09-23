@@ -2,7 +2,10 @@ package com.daehwapay.bankingservice.adapter.axon.aggregate;
 
 import com.daehwapay.bankingservice.adapter.axon.command.CreateRequestFirmbankingCommand;
 import com.daehwapay.bankingservice.adapter.axon.event.RequestFirmbankingCreatedEvent;
+import com.daehwapay.bankingservice.adapter.axon.event.UpdateRequestFirmbankingEvent;
+import com.daehwapay.bankingservice.adapter.axon.command.UpdateRequestFirmbankingCommand;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -54,5 +57,21 @@ public class RequestFirmBankingAggregate {
         fromBankAccountNumber = event.getFromBankAccountNumber();
         toBankName = event.getToBankName();
         toBankAccountNumber = event.getToBankAccountNumber();
+    }
+
+    @CommandHandler
+    public String handle(@NotNull UpdateRequestFirmbankingCommand command) {
+        System.out.println("UpdateRequestFirmbankingCommand Handler");
+        id = command.getAggregateIdentifier();
+
+        apply(new UpdateRequestFirmbankingEvent(command.getFirmbankingStatus()));
+        return id;
+    }
+
+    @EventSourcingHandler
+    public void on(UpdateRequestFirmbankingEvent event) {
+        System.out.println("UpdateRequestFirmbankingEvent Sourcing Handler");
+
+        firmbankingStatus = event.getFirmbankingStatus();
     }
 }
