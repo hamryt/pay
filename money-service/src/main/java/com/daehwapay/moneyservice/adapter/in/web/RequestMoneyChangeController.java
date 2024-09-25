@@ -1,10 +1,7 @@
 package com.daehwapay.moneyservice.adapter.in.web;
 
 import com.daehwapay.common.WebAdapter;
-import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyCommand;
-import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyUseCase;
-import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestCommand;
-import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestUseCase;
+import com.daehwapay.moneyservice.application.port.in.*;
 import com.daehwapay.moneyservice.domain.MoneyChangingRequest;
 import com.daehwapay.moneyservice.enums.MoneyChangingResultStatus;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +61,16 @@ public class RequestMoneyChangeController {
     @PostMapping(path = "/money/create-member-money")
     void createMemberMoney(@RequestBody CreateMemberMoneyRequest request) {
         createUseCase.createMemberMoney(new CreateMemberMoneyCommand(request.getTargetMembershipId()));
+    }
+
+    @PostMapping(path = "/money/increase-eda")
+    void increaseMoneyChangingRequestByEvent(@RequestBody IncreaseMoneyRequest request) {
+        IncreaseMoneyCommand command = IncreaseMoneyCommand.builder()
+                .targetMembershipId(request.getTargetMembershipId())
+                .amount(request.getAmount())
+                .build();
+
+        increaseUseCase.increaseMoneyByEvent(command);
     }
 
     @PostMapping(path = "/money/increate-member-money")

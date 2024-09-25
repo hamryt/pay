@@ -4,6 +4,8 @@ import com.daehwapay.moneyservice.adapter.in.axon.command.CreateMoneyCommand;
 import com.daehwapay.moneyservice.adapter.in.axon.event.CreateMemberMoneyEvent;
 import com.daehwapay.moneyservice.adapter.in.axon.command.IncreaseMemberMoneyCommand;
 import com.daehwapay.moneyservice.adapter.in.axon.event.IncreaseMemberMoneyEvent;
+import com.daehwapay.moneyservice.adapter.in.axon.event.RechargeMoneyEvent;
+import com.daehwapay.moneyservice.application.port.out.RechargingMoneyCommand;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -34,6 +36,27 @@ public class MemberMoneyAggregate {
         System.out.println("Create money command Handler");
 
         apply(new CreateMemberMoneyEvent(command.getMembershipId()));
+    }
+
+    @CommandHandler
+    public void handle(RechargingMoneyCommand command) {
+        System.out.println("RechargingMoneyCommand handler");
+        id = command.getAggregateIdentifier();
+        System.out.println("RechargingMoneyCommand handler command aggregate identifier: " + id);
+
+//        원래는 S to S 로 뱅킹 정보를 가져와야 하지만 mocking으로 처리
+//        RegisteredBankAccountAggregateIdentifier bankAccountAggregate = getRegisteredBankAccountPort.getRegisteredBankAccount(command.getMembershipId());
+
+        RechargeMoneyEvent event = RechargeMoneyEvent.builder()
+                .rechargingRequestId(command.getRechargingRequestId())
+                .membershipId(command.getMembershipId())
+                .amount(command.getAmount())
+                .bankingAccountAggregateIdentifier("test-bank-account-aggregate-identifier")
+                .bankName("woori")
+                .bankAccountNumber("123412341234")
+                .build();
+
+        apply(event);
     }
 
     @EventSourcingHandler

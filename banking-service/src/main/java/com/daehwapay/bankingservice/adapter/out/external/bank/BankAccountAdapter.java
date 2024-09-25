@@ -8,7 +8,7 @@ import com.daehwapay.common.ExternalAdapter;
 public class BankAccountAdapter implements RequestBankAccountInfoPort, RequestExternalFirmbankingPort {
     @Override
     public BankAccount requestBankAccount(GetBankAccountRequest request) {
-        return new BankAccount(request.getBankName(), request.getBankName());
+        return new BankAccount(request.getBankName(), request.getBankName(), true);
     }
 
     @Override

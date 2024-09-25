@@ -9,14 +9,9 @@ import com.daehwapay.moneyservice.adapter.in.axon.command.IncreaseMemberMoneyCom
 import com.daehwapay.moneyservice.adapter.out.persistence.MemberMoneyEntity;
 import com.daehwapay.moneyservice.adapter.out.persistence.MoneyChangeRequestEntity;
 import com.daehwapay.moneyservice.adapter.out.persistence.MoneyChangeRequestMapper;
-import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyCommand;
-import com.daehwapay.moneyservice.application.port.in.CreateMemberMoneyUseCase;
-import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestCommand;
-import com.daehwapay.moneyservice.application.port.in.IncreaseMoneyRequestUseCase;
-import com.daehwapay.moneyservice.application.port.out.CreateMoneyPort;
-import com.daehwapay.moneyservice.application.port.out.GetMoneyPort;
-import com.daehwapay.moneyservice.application.port.out.IncreaseMoneyPort;
-import com.daehwapay.moneyservice.application.port.out.SendRechargingMoneyTaskPort;
+import com.daehwapay.moneyservice.application.port.in.*;
+import com.daehwapay.moneyservice.application.port.out.*;
+import com.daehwapay.moneyservice.domain.MemberMoney;
 import com.daehwapay.moneyservice.domain.MoneyChangingRequest;
 import com.daehwapay.moneyservice.enums.ChangingMoneyStatus;
 import com.daehwapay.moneyservice.enums.ChangingType;
@@ -160,6 +155,30 @@ public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase, C
                         System.out.println("error : " + throwable.getMessage());
                     }
                 });
+    }
+
+    @Override
+    public void increaseMoneyByEvent(IncreaseMoneyCommand command) {
+        MemberMoneyEntity moneyEntity = getMoneyPort.getMemberMoneyById(command.getTargetMembershipId());
+        String moneyIdentifier = moneyEntity.getAggregateIdentifier();
+
+        RechargingMoneyCommand rechargingMoneyCommand = RechargingMoneyCommand.builder()
+                .aggregateIdentifier(moneyIdentifier)
+                .rechargingRequestId(UUID.randomUUID().toString())
+                .membershipId(command.getTargetMembershipId().toString())
+                .amount(command.getAmount())
+                .build();
+
+        commandGateway.send(rechargingMoneyCommand).whenComplete(
+                (Object result, Throwable throwable) -> {
+                    if (throwable == null) {
+                        System.out.println("Aggregate ID: " + result.toString());
+                    } else {
+                        throwable.printStackTrace();
+                        System.out.println("Error occurred.");
+                    }
+                }
+        );
     }
 
     private IncreaseMemberMoneyCommand getIncreaseMemberMoneyCommand(MemberMoneyEntity money) {

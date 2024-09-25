@@ -8,6 +8,8 @@ services:
     ports:
       - "8024:8024"
       - "8124:8124"
+    environment:
+      - AXONIQ_AXONSERVER_STANDALONE=true
     volumes:
       - axonserver-data:/axonserver/data
       - axonserver-events:/axonserver/events

@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BankAccount {
     private final String bankName;
-    private final String bankAccountName;
+    private final String bankAccountNumber;
+    private final boolean valid;
 }
