@@ -2,13 +2,16 @@ package com.daehwapay.moneyservice.adapter.in.axon.saga;
 
 import com.daehwapay.common.command.CheckRegisteredBankAccountCommand;
 import com.daehwapay.common.command.RequestFirmbankingCommand;
+import com.daehwapay.common.command.RollbackFirmbankingRequestCommand;
 import com.daehwapay.common.event.CheckedRegisteredBankAccountEvent;
 import com.daehwapay.common.event.RequestFirmbankingFinishedEvent;
+import com.daehwapay.common.event.RollbackFirmbankingFinishedEvent;
 import com.daehwapay.moneyservice.adapter.in.axon.event.RechargeMoneyEvent;
 import com.daehwapay.moneyservice.adapter.out.persistence.MemberMoneyEntity;
 import com.daehwapay.moneyservice.application.port.out.IncreaseMoneyPort;
 import jakarta.validation.constraints.NotNull;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.modelling.saga.EndSaga;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
@@ -98,10 +101,29 @@ public class RechargingSaga {
         MemberMoneyEntity entity = port.increaseMoney(Long.parseLong(event.getMembershipId()), event.getAmount());
 
         if (entity == null) {
-            System.out.println("amount plus failed");
+            String rollbackFirmbankingId = UUID.randomUUID().toString();
+            SagaLifecycle.associateWith("rollbackFirmbankingId", rollbackFirmbankingId);
+
+            RollbackFirmbankingRequestCommand command = RollbackFirmbankingRequestCommand.builder()
+                    .rollbackFirmbankingId(rollbackFirmbankingId)
+                    .aggregateIdentifier(event.getRequestFirmbankingAggregateIdentifier())
+                    .rechargeRequestId(event.getRechargingRequestId())
+                    .membershipId(event.getMembershipId())
+                    .bankName(event.getFromBankName())
+                    .bankAccountNumber(event.getFromBankAccountNumber())
+                    .moneyAmount(event.getAmount())
+                    .build();
+
+            commandGateway.send(command);
         } else {
             System.out.println("!!!!!!!!!!!!!!saga end!!!!!!!!!!!!!!!");
             SagaLifecycle.end();
         }
+    }
+
+    @EndSaga
+    @SagaEventHandler(associationProperty = "rollbackFirmbankingId")
+    public void handle(RollbackFirmbankingFinishedEvent event) {
+        System.out.println("RollbackFirmbankingFinishedEvent saga: " + event.toString());
     }
 }

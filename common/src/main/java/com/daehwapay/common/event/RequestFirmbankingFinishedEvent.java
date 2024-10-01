@@ -9,6 +9,8 @@ public class RequestFirmbankingFinishedEvent {
     private String requestFirmbankingId;
     private String rechargingRequestId;
     private String membershipId;
+    private String fromBankName;
+    private String fromBankAccountNumber;
     private String toBankName;
     private String toBankAccountNumber;
     private int amount;

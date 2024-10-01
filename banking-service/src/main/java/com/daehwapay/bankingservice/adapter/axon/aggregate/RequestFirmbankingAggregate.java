@@ -9,7 +9,9 @@ import com.daehwapay.bankingservice.adapter.out.external.bank.FirmbankingResult;
 import com.daehwapay.bankingservice.application.port.out.RequestExternalFirmbankingPort;
 import com.daehwapay.bankingservice.application.port.out.RequestFirmbankingPort;
 import com.daehwapay.common.command.RequestFirmbankingCommand;
+import com.daehwapay.common.command.RollbackFirmbankingRequestCommand;
 import com.daehwapay.common.event.RequestFirmbankingFinishedEvent;
+import com.daehwapay.common.event.RollbackFirmbankingFinishedEvent;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -107,12 +109,50 @@ public class RequestFirmbankingAggregate {
                 .requestFirmbankingId(command.getRequestFirmbankingId())
                 .rechargingRequestId(command.getRechargingRequestId())
                 .membershipId(command.getMembershipId())
+                .fromBankName(command.getFromBankName())
+                .fromBankAccountNumber(command.getFromBankAccountNumber())
                 .toBankName(command.getToBankName())
                 .toBankAccountNumber(command.getToBankAccountNumber())
                 .amount(command.getAmount())
                 .status(result.getResultCode())
                 .requestFirmbankingAggregateIdentifier(id)
                 .build());
+    }
+
+    @CommandHandler
+    public RequestFirmbankingAggregate(
+            @NotNull RollbackFirmbankingRequestCommand command,
+            RequestFirmbankingPort firmbankingPort,
+            RequestExternalFirmbankingPort externalFirmbankingPort
+    ) {
+        System.out.println("RollbackFirmbankingRequestCommand Handler");
+        id = UUID.randomUUID().toString();
+
+        firmbankingPort.create(
+                command.getBankName(),
+                command.getBankAccountNumber(),
+                command.getBankName(),
+                command.getBankAccountNumber(),
+                command.getMoneyAmount(),
+                0,
+                id);
+
+        // firmbanking!
+        externalFirmbankingPort.requestExternalFirmbanking(
+                new ExternalFirmbankingRequest(
+                        command.getBankName(),
+                        command.getBankAccountNumber(),
+                        command.getBankName(),
+                        command.getBankAccountNumber(),
+                        command.getMoneyAmount()
+                ));
+
+        apply(RollbackFirmbankingFinishedEvent.builder()
+                .rollbackFirmbankingId(command.getRollbackFirmbankingId())
+                .membershipId(command.getMembershipId())
+                .rollbackFirmbankingAggregateIdentifier(id)
+                .build()
+        );
     }
 
     @EventSourcingHandler
