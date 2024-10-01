@@ -1,10 +1,13 @@
 package com.daehwapay.moneyservice.adapter.in.axon.saga;
 
 import com.daehwapay.common.command.CheckRegisteredBankAccountCommand;
+import com.daehwapay.common.command.RequestFirmbankingCommand;
 import com.daehwapay.common.event.CheckedRegisteredBankAccountEvent;
+import com.daehwapay.common.event.RequestFirmbankingFinishedEvent;
 import com.daehwapay.moneyservice.adapter.in.axon.event.RechargeMoneyEvent;
+import com.daehwapay.moneyservice.adapter.out.persistence.MemberMoneyEntity;
+import com.daehwapay.moneyservice.application.port.out.IncreaseMoneyPort;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.SagaLifecycle;
@@ -22,6 +25,7 @@ public class RechargingSaga {
     public void setCommandGateway(@NotNull CommandGateway commandGateway) {
         this.commandGateway = commandGateway;
     }
+
     @StartSaga
     @SagaEventHandler(associationProperty = "rechargingRequestId")
     public void handler(RechargeMoneyEvent event) {
@@ -64,5 +68,40 @@ public class RechargingSaga {
 
         String requestFirmbankingId = UUID.randomUUID().toString();
         SagaLifecycle.associateWith("requestFirmbankingId", requestFirmbankingId);
+
+        RequestFirmbankingCommand command = RequestFirmbankingCommand.builder()
+                .requestFirmbankingId(requestFirmbankingId)
+                .aggregateIdentifier(event.getFirmbankingRequestAggregateIdentifier())
+                .rechargingRequestId(event.getRechargingRequestId())
+                .membershipId(event.getMembershipId())
+                .fromBankName(event.getFromBankName())
+                .fromBankAccountNumber(event.getFromBankAccountNumber())
+                .toBankName("kakao bank")
+                .toBankAccountNumber("1234-1234-1234")
+                .amount(event.getAmount())
+                .build();
+
+        commandGateway.send(command);
+    }
+
+    @SagaEventHandler(associationProperty = "requestFirmbankingId")
+    public void handler(RequestFirmbankingFinishedEvent event, IncreaseMoneyPort port) {
+        System.out.println("RequestFirmbankingFinishedEvent saga: " + event.toString());
+
+        boolean status = event.getStatus() == 0;
+        if (status) {
+            System.out.println("RequestFirmbankingFinishedEvent event success");
+        } else {
+            System.out.println("RequestFirmbankingFinishedEvent event failed");
+        }
+
+        MemberMoneyEntity entity = port.increaseMoney(Long.parseLong(event.getMembershipId()), event.getAmount());
+
+        if (entity == null) {
+            System.out.println("amount plus failed");
+        } else {
+            System.out.println("!!!!!!!!!!!!!!saga end!!!!!!!!!!!!!!!");
+            SagaLifecycle.end();
+        }
     }
 }

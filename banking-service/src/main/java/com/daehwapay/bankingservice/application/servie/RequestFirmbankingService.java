@@ -41,7 +41,8 @@ public class RequestFirmbankingService implements RequestFirmbankingUseCase {
                         command.getFromBankName(),
                         command.getFromBankAccount(),
                         command.getToBankName(),
-                        command.getToBankAccount()
+                        command.getToBankAccount(),
+                        command.getMoneyAmount()
                 ));
 
         if (result.getResultCode() == 1) {
@@ -80,7 +81,8 @@ public class RequestFirmbankingService implements RequestFirmbankingUseCase {
                                 command.getFromBankName(),
                                 command.getFromBankAccount(),
                                 command.getToBankName(),
-                                command.getToBankAccount()
+                                command.getToBankAccount(),
+                                command.getMoneyAmount()
                         ));
 
                 UUID randomUUID = UUID.randomUUID();

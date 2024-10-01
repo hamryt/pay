@@ -12,8 +12,8 @@ public class RegisteredBankAccountAdapter implements RegisterBankAccountPort {
     private final RegisteredBankAccountRepository repository;
 
     @Override
-    public RegisteredBankAccountEntity register(String membershipId, String bankName, String bankAccountNumber, boolean linkedStatusValid) {
-        return repository.save(new RegisteredBankAccountEntity(membershipId, bankName, bankAccountNumber, linkedStatusValid));
+    public RegisteredBankAccountEntity register(String membershipId, String bankName, String bankAccountNumber, String aggregateIdentifier, boolean linkedStatusValid) {
+        return repository.save(new RegisteredBankAccountEntity(membershipId, bankName, bankAccountNumber, aggregateIdentifier, linkedStatusValid));
     }
 
     @Override

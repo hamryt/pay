@@ -51,7 +51,7 @@ public class MemberMoneyAggregate {
                 .rechargingRequestId(command.getRechargingRequestId())
                 .membershipId(command.getMembershipId())
                 .amount(command.getAmount())
-                .bankingAccountAggregateIdentifier("test-bank-account-aggregate-identifier")
+                .bankingAccountAggregateIdentifier("31bb9de2-cb4e-47e2-9688-33adfe7464b5")
                 .bankName("woori")
                 .bankAccountNumber("123412341234")
                 .build();

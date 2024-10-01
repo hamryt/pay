@@ -8,6 +8,7 @@ import com.daehwapay.bankingservice.application.port.out.RegisterBankAccountPort
 import com.daehwapay.common.command.CheckRegisteredBankAccountCommand;
 import com.daehwapay.common.event.CheckedRegisteredBankAccountEvent;
 import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Aggregate
+@NoArgsConstructor
 public class RegisteredBankAccountAggregate {
     @AggregateIdentifier
     private String id;
@@ -48,8 +50,8 @@ public class RegisteredBankAccountAggregate {
                 .isChecked(bankAccount.isValid())
                 .amount(command.getAmount())
                 .firmbankingRequestAggregateIdentifier(firmbankingUUID)
-                .toBankName(bankAccount.getBankName())
-                .toBankAccountNumber(bankAccount.getBankAccountNumber())
+                .fromBankName(bankAccount.getBankName())
+                .fromBankAccountNumber(bankAccount.getBankAccountNumber())
                 .build());
     }
 

@@ -15,12 +15,14 @@ public class RegisteredBankAccountEntity {
     private String membershipId;
     private String bankName;
     private String bankAccountNumber;
+    private String aggregateIdentifier;
     private boolean linkedStatusValid;
 
-    public RegisteredBankAccountEntity(String membershipId, String bankName, String bankAccountNumber, boolean linkedStatusValid) {
+    public RegisteredBankAccountEntity(String membershipId, String bankName, String bankAccountNumber, String aggregateIdentifier, boolean linkedStatusValid) {
         this.membershipId = membershipId;
         this.bankName = bankName;
         this.bankAccountNumber = bankAccountNumber;
+        this.aggregateIdentifier = aggregateIdentifier;
         this.linkedStatusValid = linkedStatusValid;
     }
 }

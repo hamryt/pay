@@ -10,4 +10,5 @@ public class RegisterBankAccountRequest {
     private String bankName;
     private String bankAccountNumber;
     private boolean linkedStatusValid;
+
 }

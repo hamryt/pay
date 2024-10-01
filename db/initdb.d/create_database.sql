@@ -20,6 +20,7 @@ create table banking.registered_bank_account
     bank_account_number        varchar(255),
     bank_name                  varchar(255),
     membership_id              varchar(255),
+    aggregate_identifier       varchar(255),
     primary key (registered_bank_account_id)
 ) engine=InnoDB;
 

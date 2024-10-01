@@ -1,9 +1,15 @@
 package com.daehwapay.bankingservice.adapter.axon.aggregate;
 
 import com.daehwapay.bankingservice.adapter.axon.command.CreateRequestFirmbankingCommand;
+import com.daehwapay.bankingservice.adapter.axon.command.UpdateRequestFirmbankingCommand;
 import com.daehwapay.bankingservice.adapter.axon.event.RequestFirmbankingCreatedEvent;
 import com.daehwapay.bankingservice.adapter.axon.event.UpdateRequestFirmbankingEvent;
-import com.daehwapay.bankingservice.adapter.axon.command.UpdateRequestFirmbankingCommand;
+import com.daehwapay.bankingservice.adapter.out.external.bank.ExternalFirmbankingRequest;
+import com.daehwapay.bankingservice.adapter.out.external.bank.FirmbankingResult;
+import com.daehwapay.bankingservice.application.port.out.RequestExternalFirmbankingPort;
+import com.daehwapay.bankingservice.application.port.out.RequestFirmbankingPort;
+import com.daehwapay.common.command.RequestFirmbankingCommand;
+import com.daehwapay.common.event.RequestFirmbankingFinishedEvent;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,7 +29,7 @@ import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RequestFirmBankingAggregate {
+public class RequestFirmbankingAggregate {
     @AggregateIdentifier
     private String id;
     private String fromBankName;
@@ -34,7 +40,7 @@ public class RequestFirmBankingAggregate {
     private int firmbankingStatus;
 
     @CommandHandler
-    public RequestFirmBankingAggregate(CreateRequestFirmbankingCommand command) {
+    public RequestFirmbankingAggregate(CreateRequestFirmbankingCommand command) {
         System.out.println("CreateRequestFirmbankingCommand handler");
 
         RequestFirmbankingCreatedEvent event = RequestFirmbankingCreatedEvent.builder()
@@ -68,10 +74,50 @@ public class RequestFirmBankingAggregate {
         return id;
     }
 
+    @CommandHandler
+    public RequestFirmbankingAggregate(
+            RequestFirmbankingCommand command,
+            RequestFirmbankingPort firmbankingPort,
+            RequestExternalFirmbankingPort externalFirmbankingPort
+    ) {
+        System.out.println("RequestFirmbankingCommand handler");
+        id = command.getAggregateIdentifier();
+
+        firmbankingPort.create(
+                command.getFromBankName(),
+                command.getFromBankAccountNumber(),
+                command.getToBankName(),
+                command.getToBankAccountNumber(),
+                command.getAmount(),
+                0, // 0: good
+                id
+        );
+
+        FirmbankingResult result = externalFirmbankingPort.requestExternalFirmbanking(
+                new ExternalFirmbankingRequest(
+                        command.getFromBankName(),
+                        command.getFromBankAccountNumber(),
+                        command.getToBankName(),
+                        command.getToBankAccountNumber(),
+                        command.getAmount()
+                )
+        );
+
+        apply(RequestFirmbankingFinishedEvent.builder()
+                .requestFirmbankingId(command.getRequestFirmbankingId())
+                .rechargingRequestId(command.getRechargingRequestId())
+                .membershipId(command.getMembershipId())
+                .toBankName(command.getToBankName())
+                .toBankAccountNumber(command.getToBankAccountNumber())
+                .amount(command.getAmount())
+                .status(result.getResultCode())
+                .requestFirmbankingAggregateIdentifier(id)
+                .build());
+    }
+
     @EventSourcingHandler
     public void on(UpdateRequestFirmbankingEvent event) {
         System.out.println("UpdateRequestFirmbankingEvent Sourcing Handler");
-
         firmbankingStatus = event.getFirmbankingStatus();
     }
 }

@@ -19,6 +19,6 @@ public class CheckedRegisteredBankAccountEvent {
 
     private String firmbankingRequestAggregateIdentifier;
 
-    private String toBankName;
-    private String toBankAccountNumber;
+    private String fromBankName;
+    private String fromBankAccountNumber;
 }
