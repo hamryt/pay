@@ -84,7 +84,6 @@ services:
     depends_on:
       - mysql
     environment:
-      - AXONIQ_AXONSERVER_STANDALONE=true
       - AXON_AXONSERVER_SERVERS=axon-server:8124
       - AXON_SERIALIZER_EVENTS=jackson
       - AXON_SERIALIZER_MESSAGES=jackson
@@ -98,6 +97,30 @@ services:
       - TASK_TOPIC=daehwa.task.recharge
       - TASK_RESULT_TOPIC=daehwa.task.result
       - LOGGING_TOPIC=daehwa.logging.out.stdout
+
+  payment-service:
+    image: pay-payment-service:1.0.0-SNAPSHOT
+    networks:
+      - daehwapay_network
+    ports:
+      - "9093:8084"
+    restart: always
+    depends_on:
+      - kafka
+      - mysql
+    environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
+      - PAYMENT_DB_URL=jdbc:mysql://mysql:3306/payment?useSSL=false&allowPublicKeyRetrieval=true
+      - DB_USER=root
+      - DB_PASSWORD=riahn
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=daehwa.logging.out.stdout
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
+      - SERVICE_BANKING_URL=http://banking-service:8080
 
   zookeeper:
     image: 'arm64v8/zookeeper:3.8'
