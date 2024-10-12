@@ -9,6 +9,8 @@ import com.daehwapay.common.event.RollbackFirmbankingFinishedEvent;
 import com.daehwapay.moneyservice.adapter.in.axon.event.RechargeMoneyEvent;
 import com.daehwapay.moneyservice.adapter.out.persistence.MemberMoneyEntity;
 import com.daehwapay.moneyservice.application.port.out.IncreaseMoneyPort;
+import com.daehwapay.moneyservice.enums.ChangingMoneyStatus;
+import com.daehwapay.moneyservice.enums.ChangingType;
 import jakarta.validation.constraints.NotNull;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.EndSaga;
@@ -99,6 +101,13 @@ public class RechargingSaga {
         }
 
         MemberMoneyEntity entity = port.increaseMoney(Long.parseLong(event.getMembershipId()), event.getAmount());
+        port.createMoneyChange(
+                Long.parseLong(event.getMembershipId()),
+                ChangingType.from(event.getAmount()),
+                event.getAmount(),
+                true,
+                ChangingMoneyStatus.from(event.getStatus()),
+                UUID.randomUUID());
 
         if (entity == null) {
             String rollbackFirmbankingId = UUID.randomUUID().toString();

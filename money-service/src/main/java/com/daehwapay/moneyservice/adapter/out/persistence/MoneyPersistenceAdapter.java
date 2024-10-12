@@ -20,7 +20,7 @@ public class MoneyPersistenceAdapter implements IncreaseMoneyPort, CreateMoneyPo
     private final MemberMoneyRepository memberMoneyRepository;
 
     @Override
-        public MoneyChangeRequestEntity createMoneyChange(
+    public MoneyChangeRequestEntity createMoneyChange(
             Long targetMembershipId,
             ChangingType moneyChangingType,
             int moneyAmount,
