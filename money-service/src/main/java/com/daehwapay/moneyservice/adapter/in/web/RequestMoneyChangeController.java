@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RequestMoneyChangeController {
 
-    private final IncreaseMoneyRequestUseCase increaseUseCase;
+    private final IncreaseMoneyRequestUseCase updateMoneyUseCase;
     private final CreateMemberMoneyUseCase createUseCase;
 
     @PostMapping(path = "/money/increase")
@@ -26,7 +26,7 @@ public class RequestMoneyChangeController {
                 .corporation(request.isCorporation())
                 .build();
 
-        MoneyChangingRequest moneyChangingRequest = increaseUseCase.increaseMoney(command);
+        MoneyChangingRequest moneyChangingRequest = updateMoneyUseCase.increaseMoney(command);
 
         MoneyChangeResultDetail detail = MoneyChangeResultDetail.builder()
                 .moneyChangingRequestId(moneyChangingRequest.getMoneyChangingRequestId())
@@ -46,7 +46,7 @@ public class RequestMoneyChangeController {
                 .corporation(request.isCorporation())
                 .build();
 
-        MoneyChangingRequest moneyChangingRequest = increaseUseCase.increaseMoneyAsync(command);
+        MoneyChangingRequest moneyChangingRequest = updateMoneyUseCase.increaseMoneyAsync(command);
 
         MoneyChangeResultDetail detail = MoneyChangeResultDetail.builder()
                 .moneyChangingRequestId(moneyChangingRequest.getMoneyChangingRequestId())
@@ -64,16 +64,26 @@ public class RequestMoneyChangeController {
     }
 
     @PostMapping(path = "/money/increase-eda")
-    void increaseMoneyChangingRequestByEvent(@RequestBody IncreaseMoneyRequest request) {
+    void increaseMoneyChangingRequestByEvent(@RequestBody UpdateMoneyRequest request) {
         IncreaseMoneyCommand command = IncreaseMoneyCommand.builder()
                 .targetMembershipId(request.getTargetMembershipId())
                 .amount(request.getAmount())
                 .build();
 
-        increaseUseCase.increaseMoneyByEvent(command);
+        updateMoneyUseCase.updateMoneyByEvent(command);
     }
 
-    @PostMapping(path = "/money/increate-member-money")
+    @PostMapping(path = "/money/decrease-eda")
+    void decreaseMoneyChangingRequestByEvent(@RequestBody UpdateMoneyRequest request) {
+        IncreaseMoneyCommand command = IncreaseMoneyCommand.builder()
+                .targetMembershipId(request.getTargetMembershipId())
+                .amount(request.getAmount() * -1)
+                .build();
+
+       updateMoneyUseCase.updateMoneyByEvent(command);
+    }
+
+    @PostMapping(path = "/money/increase-member-money")
     void increaseMemberMoney(@RequestBody IncreaseMemberMoneyRequest request) {
         IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
                 .targetMembershipId(request.getMembershipId())
@@ -81,6 +91,6 @@ public class RequestMoneyChangeController {
                 .corporation(request.isCorporation())
                 .build();
 
-        increaseUseCase.increaseMemberMoney(command);
+        updateMoneyUseCase.increaseMemberMoney(command);
     }
 }

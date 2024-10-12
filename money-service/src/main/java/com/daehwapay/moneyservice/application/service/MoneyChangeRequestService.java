@@ -158,7 +158,7 @@ public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase, C
     }
 
     @Override
-    public void increaseMoneyByEvent(IncreaseMoneyCommand command) {
+    public void updateMoneyByEvent(IncreaseMoneyCommand command) {
         MemberMoneyEntity moneyEntity = getMoneyPort.getMemberMoneyById(command.getTargetMembershipId());
         String moneyIdentifier = moneyEntity.getAggregateIdentifier();
 

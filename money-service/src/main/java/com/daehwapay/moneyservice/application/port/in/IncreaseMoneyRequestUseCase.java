@@ -1,6 +1,5 @@
 package com.daehwapay.moneyservice.application.port.in;
 
-import com.daehwapay.moneyservice.adapter.out.persistence.MemberMoneyEntity;
 import com.daehwapay.moneyservice.domain.MoneyChangingRequest;
 
 public interface IncreaseMoneyRequestUseCase {
@@ -9,5 +8,5 @@ public interface IncreaseMoneyRequestUseCase {
 
     void increaseMemberMoney(IncreaseMoneyRequestCommand command);
 
-    void increaseMoneyByEvent(IncreaseMoneyCommand command);
+    void updateMoneyByEvent(IncreaseMoneyCommand command);
 }
