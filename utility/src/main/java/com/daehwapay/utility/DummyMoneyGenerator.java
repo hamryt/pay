@@ -8,61 +8,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class DummyMoneyGenerator {
-    private static final String DECREASE_API_ENDPOINT = "http://localhost:8083/money/decrease-eda";
-    private static final String INCREASE_API_ENDPOINT = "http://localhost:8083/money/increase-eda";
+    private static final String CREATE_MONEY_API_ENDPOINT = "http://localhost:9092/money/create-member-money";
+    private static final String REGISTER_ACCOUNT_API_ENDPOINT = "http://localhost:9091/banking/account/register-eda";
 
-    private static final String CREATE_MONEY_API_ENDPOINT = "http://localhost:8083/money/create-member-money";
-    private static final String REGISTER_ACCOUNT_API_ENDPOINT = "http://localhost:8082/banking/account/register-eda";
+    private static final String[] BANK_NAME = {"kb", "shinhan", "woori"};
 
-    private static final String[] BANK_NAME = {"KBB", "신한한", "우리리"};
+    public static void main(String[] args) {
+        int dummySize = 10000;
 
-    public static void main(String[] args) throws InterruptedException {
-        Random random = new Random();
-        List<Integer> readyMemberList = new ArrayList<>();
-
-        while (true) {
-            int amount = random.nextInt(20001) - 10000; // Random number between -100000 and 100000
-            int targetMembershipId = random.nextInt(1000) + 1; // Random number between 1 and 100000
-
-            registerAccountSimulator(REGISTER_ACCOUNT_API_ENDPOINT, targetMembershipId);
-            createMemberMoneySimulator(CREATE_MONEY_API_ENDPOINT, targetMembershipId);
-            Thread.sleep(100);
-            readyMemberList.add(targetMembershipId);
-
-            increaseMemberMoneySimulator(INCREASE_API_ENDPOINT, amount, targetMembershipId);
-
-            amount = random.nextInt(20001) - 10000; // Random number between -100000 and 100000
-            Integer decreaseTargetMembershipId = readyMemberList.get(random.nextInt(readyMemberList.size()));
-            increaseMemberMoneySimulator(DECREASE_API_ENDPOINT, amount, decreaseTargetMembershipId);
-
-            try {
-                Thread.sleep(100); // Wait for 1 second before making the next API call
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void increaseMemberMoneySimulator(String apiEndpoint, int amount, int targetMembershipId) {
-        try {
-            URL url = new URL(apiEndpoint);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
-
-            JSONObject jsonRequestBody = new JSONObject();
-            jsonRequestBody.put("amount", amount);
-            jsonRequestBody.put("targetMembershipId", targetMembershipId);
-
-            call(apiEndpoint, conn, jsonRequestBody);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (int i = 1; i <= dummySize; i++) {
+            registerAccountSimulator(REGISTER_ACCOUNT_API_ENDPOINT, i);
+            createMemberMoneySimulator(CREATE_MONEY_API_ENDPOINT, i);
         }
     }
 
@@ -80,7 +39,7 @@ public class DummyMoneyGenerator {
             jsonRequestBody.put("bankAccountNumber", generateRandomAccountNumber());
             jsonRequestBody.put("bankName", BANK_NAME[random.nextInt(BANK_NAME.length)]);
             jsonRequestBody.put("membershipId", targetMembershipId);
-            jsonRequestBody.put("valid", true);
+            jsonRequestBody.put("linkedStatusValid", true);
 
             call(apiEndpoint, conn, jsonRequestBody);
         } catch (IOException e) {
@@ -97,7 +56,7 @@ public class DummyMoneyGenerator {
             conn.setDoOutput(true);
 
             JSONObject jsonRequestBody = new JSONObject();
-            jsonRequestBody.put("membershipId", targetMembershipId);
+            jsonRequestBody.put("targetMembershipId", targetMembershipId);
 
             call(apiEndpoint, conn, jsonRequestBody);
         } catch (IOException e) {

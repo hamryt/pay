@@ -14,7 +14,7 @@ public class RequestFirmbankingMapper {
                 entity.getFromBankAccount(),
                 entity.getToBankName(),
                 entity.getToBankAccount(),
-                entity.getMoneyAccount(),
+                entity.getMoneyAmount(),
                 entity.getFirmbankingStatus(),
                 uuid
         );

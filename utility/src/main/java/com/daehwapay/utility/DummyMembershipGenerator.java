@@ -19,7 +19,6 @@ public class DummyMembershipGenerator {
         try {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             generateDummy(connection);
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
