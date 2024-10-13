@@ -22,10 +22,11 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @UseCase
 @RequiredArgsConstructor
-public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase, CreateMemberMoneyUseCase {
+public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase, CreateMemberMoneyUseCase, GetMemberMoneyUseCase {
 
     private final CountDownLatchManager countDownLatchManager;
     private final MoneyChangeRequestMapper moneyChangeRequestMapper;
@@ -223,5 +224,13 @@ public class MoneyChangeRequestService implements IncreaseMoneyRequestUseCase, C
         }
 
         return null;
+    }
+
+    @Override
+    public List<MemberMoney> findMemberMoneysByMembershipIds(FindMemberMoneysByMembershipIdsCommand command) {
+        return getMoneyPort.getMemberMoneyByIdIn(command.getMembershipIds())
+                .stream()
+                .map(MemberMoney::from)
+                .collect(Collectors.toList());
     }
 }

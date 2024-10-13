@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @PersistenceAdapter
@@ -66,5 +67,10 @@ public class MoneyPersistenceAdapter implements IncreaseMoneyPort, CreateMoneyPo
     @Override
     public MemberMoneyEntity getMemberMoneyById(Long id) {
         return memberMoneyRepository.findFirstByMembershipId(id);
+    }
+
+    @Override
+    public List<MemberMoneyEntity> getMemberMoneyByIdIn(List<Long> membershipIds) {
+        return memberMoneyRepository.findByMembershipIdIn(membershipIds);
     }
 }

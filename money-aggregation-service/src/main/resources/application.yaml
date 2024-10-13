@@ -1,0 +1,14 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: money-aggregation-service
+
+service:
+  membership:
+    url: ${SERVICE_MEMBERSHIP_URL}
+  money:
+    url: ${SERVICE_MONEY_URL}
+  banking:
+    url: ${SERVICE_BANKING_URL}

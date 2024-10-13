@@ -122,6 +122,21 @@ services:
       - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
       - SERVICE_BANKING_URL=http://banking-service:8080
 
+  money-aggregation-service:
+    image: pay-money-aggregation-service:1.0.0
+    networks:
+      - daehwapay_network
+    ports:
+      - "9097:8085"
+    restart: always
+    depends_on:
+      - kafka
+      - mysql
+    environment:
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8084
+      - SERVICE_MONEY_URL=http://money-service:8083
+      - SERVICE_BANKING_URL=http://banking-service:8082
+
   zookeeper:
     image: 'arm64v8/zookeeper:3.8'
     networks:

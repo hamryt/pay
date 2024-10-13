@@ -2,6 +2,7 @@ package com.daehwapay.moneyservice.adapter.in.web;
 
 import com.daehwapay.common.WebAdapter;
 import com.daehwapay.moneyservice.application.port.in.*;
+import com.daehwapay.moneyservice.domain.MemberMoney;
 import com.daehwapay.moneyservice.domain.MoneyChangingRequest;
 import com.daehwapay.moneyservice.enums.MoneyChangingResultStatus;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @WebAdapter
 @RestController
 @RequiredArgsConstructor
 public class RequestMoneyChangeController {
 
     private final IncreaseMoneyRequestUseCase updateMoneyUseCase;
+    private final GetMemberMoneyUseCase getMoneyUseCase;
     private final CreateMemberMoneyUseCase createUseCase;
 
     @PostMapping(path = "/money/increase")
@@ -92,5 +96,14 @@ public class RequestMoneyChangeController {
                 .build();
 
         updateMoneyUseCase.increaseMemberMoney(command);
+    }
+    
+    @PostMapping(path = "/money/member-money")
+    List<MemberMoney> findMemberMoneysByMembershipIds(@RequestBody FindMemberMoneysByMembershipIdsRequest request) {
+        FindMemberMoneysByMembershipIdsCommand command = FindMemberMoneysByMembershipIdsCommand.builder()
+                .membershipIds(request.getMembershipIds())
+                .build();
+
+        return getMoneyUseCase.findMemberMoneysByMembershipIds(command);
     }
 }
