@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberMoney {
-    private String memberMoneyId;
-    private String membershipId;
+    private Long id;
+    private Long membershipId;
     private int balance;
 }

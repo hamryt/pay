@@ -30,6 +30,7 @@ public class MembershipServiceAdapter implements GetMembershipPort {
                     .map(Membership::getMembershipId)
                     .collect(Collectors.toList());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
