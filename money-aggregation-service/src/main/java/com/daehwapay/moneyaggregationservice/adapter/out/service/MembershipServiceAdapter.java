@@ -34,4 +34,18 @@ public class MembershipServiceAdapter implements GetMembershipPort {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public Membership getMembershipById(String membershipId) {
+        String url = String.join("/", membershipServiceUrl, "membership", membershipId);
+
+        try {
+            String jsonResponse = httpClient.sendGetRequest(url).body();
+
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(jsonResponse, Membership.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -133,6 +133,7 @@ services:
       - kafka
       - mysql
     environment:
+      - AXONIQ_AXONSERVER_STANDALONE=true
       - AXON_AXONSERVER_SERVERS=axon-server:8124
       - AXON_SERIALIZER_EVENTS=jackson
       - AXON_SERIALIZER_MESSAGES=jackson
