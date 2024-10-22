@@ -18,7 +18,7 @@ public class MoneyIncreaseEventHandler {
         if (membership.getAddress().equals("강남구")) {
             System.out.println("DynamoDb insert" + membership.getAddress() + ", " + event.getAmount());
 
-            insertMoneyIncreaseByAddressPort.insertMoney(membership.getAddress(), event.getAmount());
+//            insertMoneyIncreaseByAddressPort.insertMoney(membership.getAddress(), event.getAmount());
         }
     }
 }

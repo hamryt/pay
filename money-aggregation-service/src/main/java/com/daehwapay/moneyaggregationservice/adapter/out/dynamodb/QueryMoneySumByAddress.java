@@ -1,14 +1,12 @@
 package com.daehwapay.moneyaggregationservice.adapter.out.dynamodb;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-public class MoneySumByAddress {
-    private String pk;
-    private String sk;
-    private long balance;
+@NoArgsConstructor
+public class QueryMoneySumByAddress {
+    private String address;
 }

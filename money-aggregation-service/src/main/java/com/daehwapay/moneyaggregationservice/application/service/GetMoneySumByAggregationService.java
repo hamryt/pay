@@ -1,14 +1,17 @@
 package com.daehwapay.moneyaggregationservice.application.service;
 
 import com.daehwapay.common.UseCase;
+import com.daehwapay.moneyaggregationservice.adapter.out.dynamodb.QueryMoneySumByAddress;
 import com.daehwapay.moneyaggregationservice.adapter.out.service.MemberMoney;
 import com.daehwapay.moneyaggregationservice.application.port.in.GetMoneySumByAddressCommand;
 import com.daehwapay.moneyaggregationservice.application.port.in.GetMoneySumByAddressUseCase;
 import com.daehwapay.moneyaggregationservice.application.port.out.GetMembershipPort;
 import com.daehwapay.moneyaggregationservice.application.port.out.GetMoneySumPort;
 import lombok.RequiredArgsConstructor;
+import org.axonframework.queryhandling.QueryGateway;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -17,6 +20,7 @@ import java.util.stream.IntStream;
 public class GetMoneySumByAggregationService implements GetMoneySumByAddressUseCase {
     private final GetMembershipPort getMembershipPort;
     private final GetMoneySumPort getMoneySumPort;
+    private final QueryGateway queryGateway;
 
     @Override
     public int getMoneySumByAddress(GetMoneySumByAddressCommand command) {
@@ -40,6 +44,18 @@ public class GetMoneySumByAggregationService implements GetMoneySumByAddressUseC
         }
 
         return sum;
+    }
+
+    @Override
+    public long queryMoneySumByAddress(GetMoneySumByAddressCommand command) {
+        try {
+            return queryGateway.query(new QueryMoneySumByAddress(command.getAddress()), long.class)
+                    .get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static <T> List<List<T>> partitionList(List<T> list, int partitionSize) {
